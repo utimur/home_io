@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  webapi:
+    image: klyushinmisha/home_io_backend
+    container_name: home_io_backend_webapi
+    build:
+      context: .
+      args:
+        - CONFIG=config.py
+        - REQUIREMENTS=requirements.dev.txt
+      dockerfile: ci/Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+      - MIGRATIONS_DIR=/opt/home_io_backend/home_io_backend/migrations
+    volumes:
+      - avatars:/opt/home_io_backend/avarars
+    depends_on:
+      - postgres
+    restart:
+      always
+
+  postgres:
+    image: postgres:11
+    container_name: home_io_backend_postgres
+    restart:
+      on-failure
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  avatars:
+    driver: local
+  postgres:
+    driver: local

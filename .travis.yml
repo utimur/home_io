@@ -1,0 +1,20 @@
+language: minimal
+
+services:
+  - docker
+
+before_install:
+  # run containers
+  - docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d
+
+script:
+  - docker exec -u root home_io_backend_webapi pytest -xvv home_io_backend/test
+
+after_script:
+  - docker-compose down
+
+deploy:
+  provider: script
+  script: bash docker_hub_deploy.sh
+  on:
+    branch: master
